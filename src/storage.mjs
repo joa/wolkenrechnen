@@ -1,7 +1,7 @@
-import { DURATIONS, ROWS, makeTasks } from './bandit.mjs';
+import { DURATIONS, ROWS, makeTasks, recommendRows } from './bandit.mjs';
 
 const KEY = 'wolkenrechnen:v1';
-const DEFAULT_SETTINGS = { duration: 5, rows: [2, 5, 10] };
+const DEFAULT_SETTINGS = { duration: 5 };
 
 export function loadState() {
   let saved;
@@ -11,8 +11,6 @@ export function loadState() {
     // Private browsing and invalid data both start with the defaults.
   }
   const duration = saved?.settings?.duration;
-  const savedRows = saved?.settings?.rows;
-  const rows = Array.isArray(savedRows) ? ROWS.filter(row => savedRows.includes(row)) : [];
   const knowledge = {};
   for (const { id } of makeTasks(ROWS)) {
     const entry = saved?.knowledge?.[id];
@@ -20,12 +18,15 @@ export function loadState() {
     knowledge[id] = {
       practice: Math.max(0, Math.min(13, entry.practice)),
       fluent: Math.max(0, Math.min(13, entry.fluent)),
+      ...(Number.isFinite(entry.lastPracticed) && entry.lastPracticed > 0
+        ? { lastPracticed: entry.lastPracticed }
+        : {}),
     };
   }
   return {
     settings: {
       duration: DURATIONS.includes(duration) ? duration : DEFAULT_SETTINGS.duration,
-      rows: rows.length ? rows : [...DEFAULT_SETTINGS.rows],
+      rows: recommendRows(knowledge),
     },
     knowledge,
   };

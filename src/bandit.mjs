@@ -10,6 +10,18 @@ export function makeTasks(rows) {
   })));
 }
 
+export function recommendRows(knowledge, now = Date.now()) {
+  const overdueAfter = 14 * 24 * 60 * 60 * 1000;
+  return ROWS.filter(row => makeTasks([row]).some(({ id }) => {
+    const entry = knowledge[id];
+    if (!entry) return true;
+    const observations = entry.practice + entry.fluent;
+    const weak = observations > 0 && entry.fluent / observations < 0.5;
+    const overdue = Number.isFinite(entry.lastPracticed) && now - entry.lastPracticed >= overdueAfter;
+    return weak || overdue;
+  }));
+}
+
 // Marsaglia–Tsang gamma sampler. Normalizing two gamma draws gives a beta draw.
 function gamma(shape, random) {
   const d = shape - 1 / 3;
@@ -50,6 +62,7 @@ export function observe(knowledge, id, fluency) {
   knowledge[id] = {
     practice: previous.practice * 0.92 + (1 - score),
     fluent: previous.fluent * 0.92 + score,
+    lastPracticed: Date.now(),
   };
 }
 
