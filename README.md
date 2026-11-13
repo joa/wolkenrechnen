@@ -2,6 +2,8 @@
 
 A multiplication practice app in German. Choose a session length (5, 10, 15, or 30 minutes) and at least one times table from 1 to 10. Enter each answer and press Enter. On iPads and other touch devices, an on-screen number pad and submit button are available. Correct answers move straight to the next question. A session ends when time runs out or when you select **Beenden** (Finish).
 
+### **[🖩 Practice now](https://joa.github.io/wolkenrechnen/)**
+
 ## Run locally
 
 ```sh
