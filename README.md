@@ -1,27 +1,23 @@
 # Wolkenrechnen
 
-Ein deutschsprachiger Trainer für das kleine Einmaleins. Wähle eine Dauer (5, 10, 15 oder 30 Minuten) und mindestens eine der Reihen von 1 bis 10. Tippe das Ergebnis ein und bestätige mit Enter. Auf dem iPad und anderen Touchgeräten stehen ein Ziffernblock und „Prüfen“ zur Verfügung. Ist die Antwort richtig, erscheint sofort die nächste Aufgabe. Die Runde endet mit Ablauf der Zeit oder über „Beenden“.
+A multiplication practice app in German. Choose a session length (5, 10, 15, or 30 minutes) and at least one times table from 1 to 10. Enter each answer and press Enter. On iPads and other touch devices, an on-screen number pad and submit button are available. Correct answers move straight to the next question. A session ends when time runs out or when you select **Beenden** (Finish).
 
-## Lokal starten
+## Run locally
 
 ```sh
 python3 -m http.server 8000
 ```
 
-Öffne [localhost:8000](http://localhost:8000). Die App verwendet native ES-Module und CSS. Sie braucht keine installierten JavaScript-Pakete. Für das GitHub-Pages-Artefakt in `dist/` genügt `node scripts/build.mjs` mit Node.js 24.
+Open [localhost:8000](http://localhost:8000). The app uses native JavaScript modules and CSS and requires no installed JavaScript packages. To build the GitHub Pages artifact in `dist/`, run `node scripts/build.mjs` with Node.js 24.
 
-## Auf GitHub Pages veröffentlichen
+## Task selection and progress
 
-1. Lege ein GitHub-Repository an und übertrage die Projektdateien einschließlich `.github/workflows/deploy.yml` auf den Branch `main`.
-2. Wähle im Repository unter **Settings → Pages → Build and deployment → Source** die Option **GitHub Actions**.
-3. Starte den Workflow im Tab **Actions** oder pushe erneut auf `main`. Der Deployment-Job zeigt die URL an. Die relativen Asset-Pfade funktionieren auch unter `/<repository>/`.
+Each multiplication problem is an arm in a multi-armed bandit. Thompson sampling draws a value from each available problem's Beta distribution to estimate how much practice it needs. Every selected times table appears once before the bandit can choose from all selected tables. Only the first answer attempt contributes to the estimate, and recent observations receive more weight. A small bonus for unsolved problems and excluding the two most recently shown problems encourage variety and help complete a table.
 
-## Aufgabenauswahl und Fortschritt
+For a correct answer on the first attempt, response time also contributes to the estimate: a solution in 1 second or less counts as fully fluent, a solution taking 10 seconds or more counts as needing practice, and times in between scale linearly. An incorrect first attempt counts as needing practice. The child still receives positive feedback whenever the answer is correct.
 
-Jede Aufgabe von `1 × 1` bis `10 × 10` ist ein Arm eines Multi-Armed Bandit. Thompson Sampling zieht für jede verfügbare Aufgabe einen Wert aus ihrer Beta-Verteilung. Der Wert schätzt den Übungsbedarf. Jede ausgewählte Reihe kommt zuerst einmal dran. Anschließend kann der Bandit aus allen ausgewählten Reihen wählen. Für die Schätzung zählt der erste Versuch jeder Aufgabe. Neuere Versuche erhalten mehr Gewicht. Ein kleiner Bonus für noch ungelöste Aufgaben und der Ausschluss der beiden letzten Aufgaben unterstützen Abwechslung und das Abschließen einer Reihe.
+Three correct answers in a row and completing an entire times table trigger confetti. The app respects the system setting for reduced motion. At the end of a session, a summary shows observed strengths and problems to practice from that session.
 
-Drei direkt gelöste Aufgaben in Folge und jede vollständig gelöste Reihe lösen Konfetti aus. Die App berücksichtigt die Systemeinstellung für reduzierte Bewegung. Die Abschlussübersicht fasst beobachtete Stärken und Übungsaufgaben aus der gerade beendeten Runde zusammen.
+Settings and learning progress are stored in the browser's `localStorage`. An active session stays in memory. The app does not use accounts, trackers, or external resources.
 
-Die Auswahl und der Lernstand liegen in `localStorage` des Browsers. Eine laufende Runde liegt im Arbeitsspeicher. Die App verwendet keine Konten, Tracker oder externen Ressourcen.
-
-Inspiration für die adaptive Auswahl war [KeyZen MAB von Adam Gradzki](https://adamgradzki.com/keyzen-mab/). Das Sampling orientiert sich an [A Tutorial on Thompson Sampling](https://web.stanford.edu/~bvr/pubs/TS_Tutorial.pdf).
+The adaptive task selection was inspired by [KeyZen MAB by Adam Gradzki](https://adamgradzki.com/keyzen-mab/). The sampling approach is based on [A Tutorial on Thompson Sampling](https://web.stanford.edu/~bvr/pubs/TS_Tutorial.pdf).

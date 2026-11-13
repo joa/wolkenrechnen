@@ -43,11 +43,18 @@ export function selectTask(tasks, knowledge, recent, solved, random = Math.rando
   return winner;
 }
 
-export function observe(knowledge, id, firstTry) {
+export function observe(knowledge, id, fluency) {
   const previous = knowledge[id] ?? { practice: 0, fluent: 0 };
+  const score = typeof fluency === 'boolean' ? Number(fluency) : Math.max(0, Math.min(1, fluency));
   // Recent observations retain more weight as the child improves.
   knowledge[id] = {
-    practice: previous.practice * 0.92 + Number(!firstTry),
-    fluent: previous.fluent * 0.92 + Number(firstTry),
+    practice: previous.practice * 0.92 + (1 - score),
+    fluent: previous.fluent * 0.92 + score,
   };
+}
+
+export function fluencyForTime(seconds) {
+  if (seconds <= 1) return 1;
+  if (seconds >= 10) return 0;
+  return (10 - seconds) / 9;
 }

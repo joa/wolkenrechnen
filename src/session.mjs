@@ -1,4 +1,4 @@
-import { makeTasks, observe, selectTask } from './bandit.mjs';
+import { fluencyForTime, makeTasks, observe, selectTask } from './bandit.mjs';
 
 export function startSession({ duration, rows }, now = Date.now()) {
   return {
@@ -10,6 +10,7 @@ export function startSession({ duration, rows }, now = Date.now()) {
     solved: new Set(),
     complete: new Set(),
     task: null,
+    taskStartedAt: now,
     phase: 'answer',
     firstAttempt: true,
     streak: 0,
@@ -17,28 +18,31 @@ export function startSession({ duration, rows }, now = Date.now()) {
   };
 }
 
-export function advanceSession(session, knowledge) {
+export function advanceSession(session, knowledge, now = Date.now()) {
   const newRows = session.tasks.filter(task => !session.seenRows.has(task.row));
   const pool = newRows.length ? newRows : session.tasks;
   session.task = selectTask(pool, knowledge, session.recent, session.solved);
+  session.taskStartedAt = now;
   session.seenRows.add(session.task.row);
   session.recent = [...session.recent, session.task.id].slice(-2);
   session.phase = 'answer';
   session.firstAttempt = true;
 }
 
-export function submitAnswer(session, knowledge, value) {
+export function submitAnswer(session, knowledge, value, now = Date.now()) {
   if (session.phase !== 'answer') return null;
   const { id, row, answer } = session.task;
   const correct = value === answer;
   const firstAttempt = session.firstAttempt;
+  const elapsedSeconds = Math.max(0, (now - session.taskStartedAt) / 1000);
+  const fluency = correct ? fluencyForTime(elapsedSeconds) : 0;
   session.firstAttempt = false;
   if (firstAttempt) {
-    observe(knowledge, id, correct);
+    observe(knowledge, id, fluency);
     const previous = session.observations.get(id) ?? { confident: 0, practice: 0 };
     session.observations.set(id, {
-      confident: previous.confident + Number(correct),
-      practice: previous.practice + Number(!correct),
+      confident: previous.confident + fluency,
+      practice: previous.practice + (1 - fluency),
       task: session.task,
     });
     session.streak = correct ? session.streak + 1 : 0;
@@ -51,7 +55,7 @@ export function submitAnswer(session, knowledge, value) {
   const completed = !session.complete.has(row) &&
     session.tasks.every(task => task.row !== row || session.solved.has(task.id));
   if (completed) session.complete.add(row);
-  return { correct, firstAttempt, completed, milestone: firstAttempt && session.streak % 3 === 0 };
+  return { correct, firstAttempt, elapsedSeconds, fluency, completed, milestone: firstAttempt && session.streak % 3 === 0 };
 }
 
 export function summarize(session) {
