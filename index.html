@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f9f6ef">
+    <meta name="description" content="Übe das kleine Einmaleins in deinem Tempo.">
+    <title>Wolkenrechnen · Dein 1×1-Trainer</title>
+    <link rel="icon" href="./cloud.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./src/styles.css">
+    <script type="module" src="./src/app.mjs"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="brand"><span class="brand-icon" aria-hidden="true"><i></i></span>Wolkenrechnen</div>
+        <span class="site-label">Das kleine Einmaleins</span>
+      </div>
+    </header>
+    <main id="app" class="layout"></main>
+    <template id="scene-template">
+      <div class="scene">
+        <div class="scene-art" aria-hidden="true">
+          <div class="sun"></div>
+          <span class="spark spark-one">✦</span>
+          <span class="spark spark-two">✧</span>
+          <span class="spark spark-three">✦</span>
+          <span class="spark spark-four">✧</span>
+          <div class="cloud cloud-left"><i></i><i></i></div>
+          <div class="cloud cloud-right"><i></i><i></i></div>
+          <div class="cloud cloud-low"><i></i><i></i></div>
+          <div class="cloud cloud-edge"><i></i><i></i></div>
+        </div>
+        <div class="rainbow" aria-hidden="true"></div>
+        <div class="equation-cloud">
+          <span class="equation"></span>
+        </div>
+        <div class="scene-caption"></div>
+        <div class="confetti" aria-hidden="true"></div>
+      </div>
+    </template>
+  </body>
+</html>
