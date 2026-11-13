@@ -10,6 +10,6 @@ for (const file of modules) {
 
 await rm('dist', { recursive: true, force: true });
 await mkdir('dist/src', { recursive: true });
-const files = ['index.html', 'cloud.svg', 'src/styles.css', ...modules.map(file => `src/${file}`)];
+const files = ['index.html', 'cloud.svg', 'og-image.png', 'src/styles.css', ...modules.map(file => `src/${file}`)];
 await Promise.all(files.map(file => copyFile(file, `dist/${file}`)));
 console.log('GitHub-Pages-Artefakt in dist/ erstellt.');
