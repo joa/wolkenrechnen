@@ -2,6 +2,14 @@ import { DURATIONS, ROWS } from './bandit.mjs';
 import { advanceSession, startSession, submitAnswer, summarize } from './session.mjs';
 import { loadState, saveState } from './storage.mjs';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(new URL('../sw.js', import.meta.url)).catch(error => {
+      console.error('Service worker registration failed:', error);
+    });
+  });
+}
+
 const app = document.querySelector('#app');
 const sceneTemplate = document.querySelector('#scene-template');
 const state = loadState();

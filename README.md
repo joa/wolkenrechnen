@@ -25,3 +25,7 @@ Three correct answers in a row and completing an entire times table trigger conf
 Settings and learning progress are stored in the browser's `localStorage`. An active session stays in memory. The app does not use accounts, trackers, or external resources.
 
 The adaptive task selection was inspired by [KeyZen MAB by Adam Gradzki](https://adamgradzki.com/keyzen-mab/). The sampling approach is based on [A Tutorial on Thompson Sampling](https://web.stanford.edu/~bvr/pubs/TS_Tutorial.pdf).
+
+## Install on a device
+
+On supported browsers, open the app over HTTPS and use the browser's **Install app** button or **Add to Home Screen** menu. On iPhone and iPad, open the Share menu in Safari and choose **Add to Home Screen**. The installed app opens in its own window and can load offline after its first visit.
