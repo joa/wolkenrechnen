@@ -2,6 +2,7 @@ import { DURATIONS, ROWS, makeTasks, recommendRows } from './bandit.mjs';
 
 const KEY = 'wolkenrechnen:v1';
 const DEFAULT_SETTINGS = { duration: 5 };
+const INPUT_MODES = ['manual', 'choices'];
 
 export function loadState() {
   let saved;
@@ -27,8 +28,12 @@ export function loadState() {
     settings: {
       duration: DURATIONS.includes(duration) ? duration : DEFAULT_SETTINGS.duration,
       rows: recommendRows(knowledge),
+      inputModes: saved?.settings?.inputModes?.filter(mode => INPUT_MODES.includes(mode)).length
+        ? [...new Set(saved.settings.inputModes.filter(mode => INPUT_MODES.includes(mode)))]
+        : ['manual'],
     },
     knowledge,
+    darkMode: Boolean(saved?.darkMode),
   };
 }
 

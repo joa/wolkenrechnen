@@ -37,8 +37,10 @@
     <main id="app" class="layout"></main>
     <template id="scene-template">
       <div class="scene">
-        <div class="scene-art" aria-hidden="true">
-          <div class="sun"></div>
+        <div class="scene-art">
+          <button class="theme-toggle" type="button" aria-label="Mond zeigen" aria-pressed="false">
+            <span class="sun"></span><span class="moon"><i></i></span><span class="shooting-star">✦</span>
+          </button>
           <span class="spark spark-one">✦</span>
           <span class="spark spark-two">✧</span>
           <span class="spark spark-three">✦</span>
@@ -48,7 +50,7 @@
           <div class="cloud cloud-low"><i></i><i></i></div>
           <div class="cloud cloud-edge"><i></i><i></i></div>
         </div>
-        <div class="rainbow" aria-hidden="true"></div>
+        <div class="rainbow" aria-hidden="true"><span class="rainbow-arch"></span><span class="square-outline"></span></div>
         <div class="equation-cloud">
           <span class="equation"></span>
         </div>

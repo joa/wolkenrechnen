@@ -1,6 +1,6 @@
 import { fluencyForTime, makeTasks, observe, selectTask } from './bandit.mjs';
 
-export function startSession({ duration, rows }, now = Date.now()) {
+export function startSession({ duration, rows, inputModes = ['manual'] }, now = Date.now()) {
   return {
     tasks: makeTasks(rows),
     deadline: now + duration * 60_000,
@@ -15,6 +15,8 @@ export function startSession({ duration, rows }, now = Date.now()) {
     firstAttempt: true,
     streak: 0,
     correct: 0,
+    inputModes,
+    inputMode: 'manual',
   };
 }
 
@@ -22,6 +24,7 @@ export function advanceSession(session, knowledge, now = Date.now()) {
   const newRows = session.tasks.filter(task => !session.seenRows.has(task.row));
   const pool = newRows.length ? newRows : session.tasks;
   session.task = selectTask(pool, knowledge, session.recent, session.solved);
+  session.inputMode = session.inputModes[Math.floor(Math.random() * session.inputModes.length)] ?? 'manual';
   session.taskStartedAt = now;
   session.seenRows.add(session.task.row);
   session.recent = [...session.recent, session.task.id].slice(-2);
